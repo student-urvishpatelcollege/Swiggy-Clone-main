@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Header from './Components/Header';
 import SearchPage from './Components/SearchPage';
@@ -22,7 +22,7 @@ function HomePage() {
       <OnlineDelivery />
       <div>
         <img
-          src="/images/swiggy_download_banner.avif"
+          src="public/images/swiggy_download_banner.avif"
           className="md:h-[350px] h-[200px] w-full pt-10 mb-[2rem]"
           alt="Swiggy App Banner"
         />
@@ -38,17 +38,19 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
 
   return (
-    <Router>
+    <BrowserRouter basename="/Swiggy-Clone-main">
       <Header />
+
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/help" element={<HelpSupportPage />} />
-        <Route path='/cart' element={<CartPage />}></Route>
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
+
       <FooterSec />
 
-      {/* Sign In Button */}
+      {/* Global Sign-In Button */}
       <button
         onClick={() => setShowLogin(true)}
         className="fixed top-4 right-4 bg-orange-500 text-white px-4 py-2 rounded z-[100]"
@@ -56,9 +58,8 @@ function App() {
         Sign In
       </button>
 
-      {/* Login Drawer */}
       {showLogin && <LoginDrawer onClose={() => setShowLogin(false)} />}
-    </Router>
+    </BrowserRouter>
   );
 }
 

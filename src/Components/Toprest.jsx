@@ -19,15 +19,12 @@ const Toprest = () => {
   };
 
   const prevSlide = () => {
-    if (slide - visibleCards >= 0) {
-      setSlide(slide - visibleCards);
-    } else {
-      setSlide(0);
-    }
+    setSlide((prev) => Math.max(prev - visibleCards, 0));
   };
 
   return (
     <div className="max-w-[1200px] mx-auto px-2">
+      {/* Header with navigation buttons */}
       <div className="flex my-5 items-center justify-between">
         <h2 className="text-[26px] font-bold text-gray-800">
           Top restaurant chains in Ahmedabad
@@ -35,32 +32,31 @@ const Toprest = () => {
 
         <div className="flex">
           <button
-            className="cursor-pointer flex justify-center items-center h-[30px] w-[30px]
-            bg-[#e2e2e7] rounded-full mx-2 disabled:opacity-50"
+            className="cursor-pointer flex justify-center items-center h-[32px] w-[32px] bg-[#e2e2e7] rounded-full mx-1 transition hover:bg-[#d4d4db] disabled:opacity-50"
             onClick={prevSlide}
             disabled={slide === 0}
+            aria-label="Previous slide"
           >
             <FaArrowLeft />
           </button>
-
           <button
-            className="cursor-pointer flex justify-center items-center h-[30px] w-[30px]
-            bg-[#e2e2e7] rounded-full mx-2 disabled:opacity-50"
+            className="cursor-pointer flex justify-center items-center h-[32px] w-[32px] bg-[#e2e2e7] rounded-full mx-1 transition hover:bg-[#d4d4db] disabled:opacity-50"
             onClick={nextSlide}
             disabled={slide + visibleCards >= data.length}
+            aria-label="Next slide"
           >
             <FaArrowRight />
           </button>
         </div>
       </div>
 
+      {/* Cards Container */}
       <div className="flex gap-5 overflow-hidden transition-all duration-500 ease-in-out">
-        {data.slice(slide, slide + visibleCards).map((d, i) => (
-          <Card {...d} key={d.id || i} />
+        {data.slice(slide, slide + visibleCards).map((restaurant, i) => (
+          <Card key={restaurant.id || i} {...restaurant} />
         ))}
       </div>
-
-      <hr className="my-4 border" />
+      <hr className="my-6 border-gray-300" />
     </div>
   );
 };

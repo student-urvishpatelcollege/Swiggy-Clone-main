@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RxCaretDown } from 'react-icons/rx';
 import { IoIosSearch } from 'react-icons/io';
-import { CiDiscount1 } from 'react-icons/ci';
+import { CiDiscount1, CiShoppingCart } from 'react-icons/ci';
 import { FaRegUser } from 'react-icons/fa';
 import { TbHelpHexagon } from 'react-icons/tb';
-import { CiShoppingCart } from 'react-icons/ci';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import SearchPage from './SearchPage';
@@ -14,19 +13,31 @@ const Header = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const [searchMode, setSearchMode] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-
   const navigate = useNavigate();
   const { cartItems } = useCart();
 
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  // ESC key to close overlays
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSearchMode(false);
+        setToggleSidebar(false);
+        setShowLogin(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <>
-      {/* Search Fullscreen Overlay */}
+      {/* Search Overlay */}
       {searchMode && (
         <div className="fixed inset-0 bg-white z-[9998] overflow-y-auto">
           <div className="p-4 flex justify-end">
-            <button onClick={() => setSearchMode(false)} className="text-2xl font-bold">&times;</button>
+            <button onClick={() => setSearchMode(false)} aria-label="Close search" className="text-2xl font-bold">&times;</button>
           </div>
           <SearchPage />
         </div>
@@ -44,7 +55,7 @@ const Header = () => {
           >
             <div className="p-4 h-full overflow-y-auto">
               <div className="flex justify-end">
-                <button onClick={() => setToggleSidebar(false)} className="text-2xl font-bold">&times;</button>
+                <button onClick={() => setToggleSidebar(false)} className="text-2xl font-bold" aria-label="Close sidebar">&times;</button>
               </div>
 
               <div className="mt-6 shadow-md">
@@ -65,7 +76,7 @@ const Header = () => {
 
               <div className="border mt-4 p-4">
                 <div className="text-xs text-gray-500 mb-2 uppercase">Recent Searches</div>
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-4 items-start hover:bg-gray-100 transition">
                   <span className="text-lg">🕑</span>
                   <div>
                     <div className="font-semibold">Gandhinagar</div>
@@ -78,13 +89,13 @@ const Header = () => {
         </div>
       )}
 
-      {/* Header */}
+      {/* Main Header */}
       {!searchMode && (
         <header className="p-[15px] shadow-xl bg-white sticky top-0 z-[9996] text-[#686b78]">
           <div className="max-w-[1200px] mx-auto flex items-center">
             {/* Logo */}
             <div className="w-[100px]">
-              <img src="/images/Swiggy-emblem.png" alt="Swiggy Logo" className="w-full" />
+              <img src="public/images/Swiggy-emblem.png" alt="Swiggy Logo" className="w-full" />
             </div>
 
             {/* Location */}
@@ -95,7 +106,7 @@ const Header = () => {
               <span className="ml-1">Gandhinagar, India</span>
               <RxCaretDown
                 onClick={() => setToggleSidebar(true)}
-                className="text-[1.3rem] text-[#fc8019] ml-1"
+                className="text-[1.3rem] text-[#fc8019] ml-1 cursor-pointer"
               />
             </div>
 
@@ -121,9 +132,14 @@ const Header = () => {
                 <span>Sign In</span>
               </button>
 
-              <button onClick={() => navigate('/cart')} className="flex items-center gap-2 hover:text-[#fc8019]">
+              <button onClick={() => navigate('/cart')} className="flex items-center gap-2 hover:text-[#fc8019] relative">
                 <CiShoppingCart />
-                <span>Cart ({totalCartCount})</span>
+                <span>Cart</span>
+                {totalCartCount > 0 && (
+                  <span className="ml-1 bg-[#fc8019] text-white text-xs px-2 py-0.5 rounded-full">
+                    {totalCartCount}
+                  </span>
+                )}
               </button>
             </div>
           </div>

@@ -40,7 +40,7 @@ const CartPage = () => {
                                 className="flex items-center gap-4 border p-4 rounded-md shadow-sm"
                             >
                                 <img
-                                    src={`/images/topRestaurants/${item.image}`}
+                                    src={`public/images/topRestaurants/${item.image}`}
                                     alt={item.name}
                                     className="w-20 h-20 object-cover rounded-md"
                                 />

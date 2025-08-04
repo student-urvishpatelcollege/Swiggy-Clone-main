@@ -1,72 +1,80 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 import categoriesData from '../data/categories';
-import categories from '../data/categories';
-
 
 const Category = () => {
-    const [Categories, setCategory] = useState([]);
-    const [slide, setSlide] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [slide, setSlide] = useState(0);
 
-    useEffect(() => {
-        setCategory(categoriesData); // api Local host
-    }, []);
-    const nextSlide=()=>{
-        console.log(categories.length)
-        if(categories.length -8==slide) return false;
-        setSlide(slide + 3);
+  const visibleCards = 6; // How many to show at a time
+  const slideStep = 3;     // How many to move per click
 
+  useEffect(() => {
+    setCategories(categoriesData);
+  }, []);
+
+  const maxSlide = Math.max(categories.length - visibleCards, 0);
+
+  const nextSlide = () => {
+    if (slide < maxSlide) {
+      setSlide(slide + slideStep);
     }
-    const prevSlide=()=>{
-        if(slide==0) return false;
-        setSlide(slide - 3);
+  };
+
+  const prevSlide = () => {
+    if (slide > 0) {
+      setSlide(slide - slideStep);
     }
+  };
 
-
-
-    return (
-        <div className='max-w-[1200px] mx-auto px-2 '>
-
-            <div className='flex my-5 items-center justify-between'>
-                <div className='   text-[26px] font-bold'>What's on your mind?</div>
-                <div className='flex'>
-                    <div className='cursor-pointer flex justify-center items-center h-[30px] w-[30px] bg-[#e2e2e7] rounded-full mx-2'
-                    onClick={prevSlide}>
-                        <FaArrowLeft /></div>
-                    <div className='cursor-pointer flex justify-center items-center h-[30px] w-[30px] bg-[#e2e2e7] rounded-full mx-2'
-                    onClick={nextSlide}>
-                        <FaArrowRight /></div>
-                </div>
-
-            </div>
-
-            <div className='flex overflow-hidden'>
-                {
-                    Categories.map(
-                        (cat, index) => {
-                            return (
-                                <div style={{
-                                    transform: `translateX(-${slide * 100}%)`
-                                }}
-                                    key={index} className='w-[152px] shrink-0 duration-500'>
-
-                                    <img src={`/images/${cat.image}`} alt={cat.path} />
-
-
-                                </div>
-
-                            )
-
-                        }
-                    )
-                }
-
-            </div>
-
-         <hr className='my-6 border'/>
-
+  return (
+    <div className="max-w-[1200px] mx-auto px-2">
+      {/* Heading and Arrows */}
+      <div className="flex my-5 items-center justify-between">
+        <h2 className="text-[26px] font-bold">What's on your mind?</h2>
+        <div className="flex">
+          <button
+            onClick={prevSlide}
+            className="cursor-pointer flex justify-center items-center h-[30px] w-[30px] bg-[#e2e2e7] rounded-full mx-2"
+            aria-label="Previous"
+          >
+            <FaArrowLeft />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="cursor-pointer flex justify-center items-center h-[30px] w-[30px] bg-[#e2e2e7] rounded-full mx-2"
+            aria-label="Next"
+          >
+            <FaArrowRight />
+          </button>
         </div>
-    )
-}
+      </div>
 
-export default Category
+      {/* Carousel */}
+      <div className="overflow-hidden">
+        <div
+          className="flex transition-transform duration-500"
+          style={{ transform: `translateX(-${slide * (100 / visibleCards)}%)` }}
+        >
+          {categories.map((cat, index) => (
+            <div
+              key={index}
+              className="w-[152px] shrink-0 flex flex-col items-center"
+            >
+              <img
+                src={`public/images/${cat.image}`}
+                alt={cat.name}
+                className="w-full h-[120px] object-contain"
+              />
+              <span className="mt-2 text-center text-sm font-medium text-gray-700">{cat.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <hr className="my-6 border" />
+    </div>
+  );
+};
+
+export default Category;

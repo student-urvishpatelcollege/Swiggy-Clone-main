@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { motion, AnimatePresence } from 'framer-motion'; // Optional animation
 
 const BestCity = () => {
-  // State to toggle between showing more or fewer cities
   const [showMore, setShowMore] = useState(false);
 
-  // Cities shown initially
   const initialCities = [
     "Bangalore", "Gurgaon", "Hyderabad", "Delhi", "Mumbai", "Pune",
     "Kolkata", "Chennai", "Ahmedabad", "Chandigarh", "Prayagraj"
   ];
 
-  // Cities shown when "Show More" is clicked
   const moreCities = [
     "Noida", "Ghaziabad", "Faridabad", "Jodhpur", "Raipur", "Guwahati",
     "Jammu", "Tirupati", "Trichy", "Kochi", "Kozhikode", "Madurai",
@@ -22,11 +20,12 @@ const BestCity = () => {
     "Kurukshetra", "Roorkee", "Muzaffarpur", "Durgapur", "Asansol", "Sambalpur"
   ];
 
-  // Render a single city link as a styled anchor tag
   const renderCityLink = (city) => (
     <a
       key={city}
       href={`https://www.swiggy.com/city/${city.toLowerCase().replace(/\s+/g, '-')}`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="border rounded-lg cursor-pointer flex items-center justify-center font-medium text-slate-700 p-4 hover:text-blue-500 transition duration-200"
     >
       Order food online in {city}
@@ -36,18 +35,31 @@ const BestCity = () => {
   return (
     <div className="max-w-[1200px] mx-auto px-2 mb-8">
       <div className="my-20">
-        {/* Heading */}
         <h2 className="text-[26px] font-bold mb-6">
           Best Places to Eat Across Cities
         </h2>
 
-        {/* Grid of city links */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {/* Grid layout */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {initialCities.map(renderCityLink)}
-          {showMore && moreCities.map(renderCityLink)}
         </div>
 
-        {/* Toggle Button: Show More / Show Less */}
+        {/* Animated moreCities list */}
+        <AnimatePresence>
+          {showMore && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-6"
+            >
+              {moreCities.map(renderCityLink)}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Toggle Button */}
         <div className="flex justify-center mt-6">
           <button
             onClick={() => setShowMore(!showMore)}

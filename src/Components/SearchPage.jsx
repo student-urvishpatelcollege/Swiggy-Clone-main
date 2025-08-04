@@ -1,47 +1,37 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IoClose } from 'react-icons/io5';
 import debounce from 'lodash.debounce';
 
-// Mock API with Pizza & Burger
+// 🔍 Mock API
 const mockAPI = (query) =>
   new Promise((resolve) => {
     setTimeout(() => {
       const data = [
-        // Pizza items
         { name: 'Pizza', type: 'Dish', image: '/images/Pizza.avif' },
         { name: "Domino's Pizza", type: 'Restaurant', image: '/images/dominos_pizza.avif' },
         { name: "La Pino'z Pizza", type: 'Restaurant', image: '/images/La_Pino_pizza.avif' },
         { name: 'Pizza Hut', type: 'Restaurant', image: '/images/Pizza_hut.avif' },
         { name: 'Veg Pizza', type: 'Dish', image: '/images/Veg_Pizza.avif' },
         { name: 'Feta Cheese Pizza', type: 'Dish', image: '/images/Cheese_Pizza.avif' },
-
-        // Burger items
         { name: 'Burger', type: 'Dish', image: '/images/Burger.avif' },
         { name: "McDonald's", type: 'Restaurant', image: '/images/onion_burger.avif' },
         { name: "Burger King", type: 'Restaurant', image: '/images/Burger_king.avif' },
         { name: 'Veg Burger', type: 'Dish', image: '/images/veg_burger.avif' },
         { name: 'Cheese Burger', type: 'Dish', image: '/images/cheese_burger.avif' },
         { name: 'Crispy Veg Burger', type: 'Dish', image: '/images/crispy_veg_burger.avif' },
-
-        // Dosa
         { name: 'Masala Dosa', type: 'Dish', image: '/images/masala_dosa.avif' },
         { name: 'Plain Dosa', type: 'Dish', image: '/images/plain_dosa.avif' },
         { name: 'Cheese Dosa', type: 'Dish', image: '/images/cheese_dosa.avif' },
         { name: 'Rava Dosa', type: 'Dish', image: '/images/rava_dosa.avif' },
-
-        // Pav Bhaji
         { name: 'Pav Bhaji', type: 'Dish', image: '/images/pav_bhaji.avif' },
         { name: 'Cheese Pav Bhaji', type: 'Dish', image: '/images/cheese_pav_bhaji.avif' },
-
-        // Samosa
         { name: 'Samosa', type: 'Dish', image: '/images/samosa.avif' },
         { name: 'Paneer Samosa', type: 'Dish', image: '/images/paneer_samosa.avif' },
-
-        // Chinese
         { name: 'Hakka Noodles', type: 'Dish', image: '/images/hakka_noodles.avif' },
         { name: 'Veg Manchurian', type: 'Dish', image: '/images/veg_manchurian.avif' },
         { name: 'Chinese Combo', type: 'Dish', image: '/images/chinese_combo.avif' },
       ];
+
       const filtered = data.filter((item) =>
         item.name.toLowerCase().includes(query.toLowerCase())
       );
@@ -49,11 +39,11 @@ const mockAPI = (query) =>
     }, 300);
   });
 
-// Highlight text match
+// 🟨 Highlight matched text
 const highlightText = (text, highlight) => {
   if (!highlight) return text;
   const regex = new RegExp(`(${highlight})`, 'gi');
-  return text.replace(regex, `<mark class="bg-yellow-100">${highlight}</mark>`);
+  return text.replace(regex, `<mark class="bg-yellow-100">$1</mark>`);
 };
 
 const SearchPage = () => {
@@ -62,19 +52,22 @@ const SearchPage = () => {
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef();
 
-  const fetchResults = debounce(async (query) => {
-    if (query.trim() === '') {
-      setResults([]);
-      return;
-    }
-    const res = await mockAPI(query);
-    setResults(res);
-    setActiveIndex(-1);
-  }, 300);
+  const fetchResults = useCallback(
+    debounce(async (query) => {
+      if (!query.trim()) {
+        setResults([]);
+        return;
+      }
+      const res = await mockAPI(query);
+      setResults(res);
+      setActiveIndex(-1);
+    }, 300),
+    []
+  );
 
   useEffect(() => {
     fetchResults(searchTerm);
-  }, [searchTerm]);
+  }, [searchTerm, fetchResults]);
 
   useEffect(() => {
     const activeItem = document.querySelector('.active-search-item');
@@ -95,7 +88,7 @@ const SearchPage = () => {
 
   return (
     <div className="max-w-[800px] mx-auto px-4 pt-12 pb-24" ref={containerRef}>
-      {/* Search Input */}
+      {/* 🔍 Search Input */}
       <div className="relative mb-8">
         <input
           type="text"
@@ -113,20 +106,21 @@ const SearchPage = () => {
         )}
       </div>
 
-      {/* Results List */}
+      {/* 🔽 Results List */}
       <div className="bg-white border border-gray-100 rounded-lg shadow-sm divide-y max-h-[460px] overflow-y-auto">
         {results.map((item, index) => (
           <div
             key={index}
             onClick={() => alert(`You selected: ${item.name}`)}
-            className={`cursor-pointer flex items-center gap-5 px-5 py-4 hover:bg-gray-50 transition ${index === activeIndex ? 'bg-gray-100 active-search-item' : ''
-              }`}
+            className={`cursor-pointer flex items-center gap-5 px-5 py-4 hover:bg-gray-50 transition ${
+              index === activeIndex ? 'bg-gray-100 active-search-item' : ''
+            }`}
           >
             <img
               src={item.image}
               alt={item.name}
               className="w-16 h-16 object-cover rounded-lg border"
-              onError={(e) => (e.target.src = '/images/placeholder.jpg')}
+              onError={(e) => (e.target.src = 'public/images/placeholder.jpg')}
             />
             <div>
               <h4
@@ -140,7 +134,7 @@ const SearchPage = () => {
           </div>
         ))}
 
-        {/* No Results */}
+        {/* 🚫 No Results */}
         {results.length === 0 && searchTerm.trim() !== '' && (
           <div className="py-8 text-center text-gray-500 text-base">
             No results found for "<strong>{searchTerm}</strong>"

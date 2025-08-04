@@ -19,12 +19,12 @@ const FooterSec = () => {
           <div className="md:text-[26px] text-center font-bold text-[#02060CBF] flex flex-col md:flex-row items-center gap-4">
             For better experience, download the Swiggy app now
             <img
-              src="/images/app_store.png"
+              src="public/images/app_store.png"
               alt="App Store"
               className="md:h-[55px] h-[40px]"
             />
             <img
-              src="/images/R.png"
+              src="public/images/R.png"
               alt="Google Play"
               className="md:h-[200px] h-[100px]"
             />
